@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSMSPlus", "SSMSPlus\SSMSPlus.csproj", "{320EB57F-22AD-486A-9C29-144938B0BBC7}"
 EndProject
@@ -10,8 +10,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSMSPlusHistory", "SSMSPlusHistory\SSMSPlusHistory.csproj", "{617D42C9-1407-4528-BEF8-C4E8440A3DDB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{931FC478-FE0D-4412-A5AC-471A6248A318}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo\HistoryDemo\Demo.csproj", "{C115E73A-0F22-4688-B073-823EBA8EE7B3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSMSPlusSearch", "SSMSPlusSearch\SSMSPlusSearch.csproj", "{306A761C-AD8F-4274-84B0-69C7B357F665}"
 EndProject
@@ -39,10 +37,6 @@ Global
 		{617D42C9-1407-4528-BEF8-C4E8440A3DDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{617D42C9-1407-4528-BEF8-C4E8440A3DDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{617D42C9-1407-4528-BEF8-C4E8440A3DDB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C115E73A-0F22-4688-B073-823EBA8EE7B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C115E73A-0F22-4688-B073-823EBA8EE7B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C115E73A-0F22-4688-B073-823EBA8EE7B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C115E73A-0F22-4688-B073-823EBA8EE7B3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{306A761C-AD8F-4274-84B0-69C7B357F665}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{306A761C-AD8F-4274-84B0-69C7B357F665}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{306A761C-AD8F-4274-84B0-69C7B357F665}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -62,9 +56,6 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{C115E73A-0F22-4688-B073-823EBA8EE7B3} = {931FC478-FE0D-4412-A5AC-471A6248A318}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D2B152AD-4AF8-4F40-846C-959E8A335884}
