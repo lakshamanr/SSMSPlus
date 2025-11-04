@@ -228,6 +228,9 @@
     <Compile Include="Ui\Controls\LoadingIndicator\LoadingIndicator.xaml.cs">
       <DependentUpon>LoadingIndicator.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Ui\Controls\GridAggregationBar\GridAggregationBar.xaml.cs">
+      <DependentUpon>GridAggregationBar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Ui\Extensions\EnhancedDataGrid.cs" />
     <Compile Include="Ui\Text\RunStream.cs" />
     <Compile Include="Ui\Controls\ComboCheckBox\ComboCheckBox.xaml.cs">
@@ -287,6 +290,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Ui\Controls\LoadingIndicator\LoadingIndicator.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\Controls\GridAggregationBar\GridAggregationBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

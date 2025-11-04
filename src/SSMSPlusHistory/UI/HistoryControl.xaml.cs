@@ -27,6 +27,9 @@ namespace SSMSPlusHistory.UI
             InitializeComponent();
             this.DataContext = ServiceLocator.GetRequiredService<HistoryControlVM>();
             this.Loaded += HistoryControl_Loaded;
+
+            // Manually set the aggregation bar after initialization
+            SSMSPlusCore.Ui.Extensions.EnhancedDataGrid.SetAggregationBar(HistoryDataGrid, AggBar);
         }
 
         private void HistoryControl_Loaded(object sender, RoutedEventArgs e)

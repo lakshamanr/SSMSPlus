@@ -1,15 +1,16 @@
 ﻿<UserControl  x:Class="SSMSPlusSearch.UI.SchemaSearchControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:conv="clr-namespace:SSMSPlusCore.Ui.Converters;assembly=SSMSPlusCore"
              xmlns:ext="clr-namespace:SSMSPlusCore.Ui.Extensions;assembly=SSMSPlusCore"
              xmlns:combo="clr-namespace:SSMSPlusCore.Ui.Controls.ComboCheckBox;assembly=SSMSPlusCore"
              xmlns:drop="clr-namespace:SSMSPlusCore.Ui.Controls.DropMenu;assembly=SSMSPlusCore"
              xmlns:loading="clr-namespace:SSMSPlusCore.Ui.Controls.LoadingIndicator;assembly=SSMSPlusCore"
+             xmlns:agg="clr-namespace:SSMSPlusCore.Ui.Controls.GridAggregationBar;assembly=SSMSPlusCore"
              Background="{DynamicResource {x:Static SystemColors.MenuBarBrushKey}}"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="1000">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -86,12 +87,13 @@
         <loading:LoadingIndicator Grid.Row="2" Title="Indexing "
                                        HorizontalAlignment="Left" Margin="0,10,0,10" Visibility="{Binding Path=IsIndexing, Converter={StaticResource VisibleIfTrueConverter}}"/>
 
-        <Grid Name="objectsGrid" Grid.Row="3" ext:GridExtensions.Structure="1*,1*|*">
-            <ext:EnhancedDataGrid  Grid.Row="0" MinHeight="100" Style="{StaticResource FastReadOnly}" BorderBrush="Black" 
+        <Grid Name="objectsGrid" Grid.Row="3" ext:GridExtensions.Structure="1*,auto,auto,1*|*">
+            <ext:EnhancedDataGrid x:Name="SearchDataGrid" Grid.Row="0" MinHeight="100" Style="{StaticResource FastReadOnly}" BorderBrush="Black"
                        ItemsSource="{Binding Source={StaticResource SearchResultsVM_VS}}"
                        SelectedIndex="0"
                        SelectedValue="{Binding SelectedItem}"
-                       IsEnabled="{Binding Path=ControlsEnabled}">
+                       IsEnabled="{Binding Path=ControlsEnabled}"
+                       ext:EnhancedDataGrid.AggregationBar="{Binding ElementName=SearchAggBar}">
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Setter Property="ext:GridExtensions.DoubleClickCommand" Value="{Binding ElementName=objectsGrid, Path=DataContext.LocateItemCmd}"/>
@@ -126,13 +128,18 @@
                 </DataGrid.Columns>
             </ext:EnhancedDataGrid>
 
-            <GridSplitter Grid.Row="1">
+            <!-- Aggregation Bar -->
+            <agg:GridAggregationBar x:Name="SearchAggBar" Grid.Row="1" />
+
+            <!-- Grid Splitter between Aggregation Bar and Detail Panel -->
+            <GridSplitter Grid.Row="2">
                 <GridSplitter.Resources>
                     <ResourceDictionary Source="pack://application:,,,/SSMSPlusCore;component/Ui/Design/GridSplitterHorizontal.xaml"/>
                 </GridSplitter.Resources>
             </GridSplitter>
 
-            <FlowDocumentScrollViewer Name="fdsvDefination"  Grid.Row="1" Margin="0,10,0,0" BorderBrush="Black" BorderThickness="1" 
+            <!-- Detail Panel -->
+            <FlowDocumentScrollViewer Name="fdsvDefination"  Grid.Row="3" Margin="0,10,0,0" BorderBrush="Black" BorderThickness="1"
                                         ext:FlowDocumentScrollViewerDocumentHighlightBehavior.HighlightContext="{Binding SelectedItem.FullPreviewHighlight}">
 
                 <FlowDocumentScrollViewer.Resources>

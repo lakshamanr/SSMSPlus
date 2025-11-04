@@ -15,6 +15,7 @@ namespace SSMSPlusCore.Ui.Utils
         public double Min { get; set; }
         public double Max { get; set; }
         public double Median { get; set; }
+        public int DistinctCount { get; set; }
         public bool HasData { get; set; }
     }
 
@@ -74,6 +75,7 @@ namespace SSMSPlusCore.Ui.Utils
             result.Min = numericValues.Min();
             result.Max = numericValues.Max();
             result.Median = CalculateMedian(numericValues);
+            result.DistinctCount = numericValues.Distinct().Count();
 
             return result;
         }
