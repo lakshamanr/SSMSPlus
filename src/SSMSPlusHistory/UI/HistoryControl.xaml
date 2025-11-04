@@ -20,6 +20,10 @@
             <ContextMenu  x:Key="RowMenu" DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
                 <MenuItem Header="Open script" CommandParameter="{Binding}"
                   Command="{Binding DataContext.OpenScriptCmd, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" />
+                <Separator />
+                <MenuItem Header="Calculate Statistics..."
+                  Command="{Binding DataContext.ShowMathOperationsCmd, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}"
+                  CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=DataGrid}}" />
             </ContextMenu>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/SSMSPlusCore;component/Ui/Design/DataGrid.xaml"/>

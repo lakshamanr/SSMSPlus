@@ -242,6 +242,9 @@
     </Compile>
     <Compile Include="Ui\Converters\HighlightToFlowDocumentConverter.cs" />
     <Compile Include="Ui\Converters\HighlightToTextBlockConverter.cs" />
+    <Compile Include="Ui\Dialogs\MathOperationsDialog.xaml.cs">
+      <DependentUpon>MathOperationsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Ui\EmptyAutomationPeer.cs" />
     <Compile Include="Ui\Extensions\FlowDocumentScrollViewerDocumentBehavior.cs" />
     <Compile Include="Ui\Extensions\GridExtensions.cs" />
@@ -256,6 +259,7 @@
     <Compile Include="Ui\Search\TextSearchHelper.cs" />
     <Compile Include="Ui\Utils\IErrorHandler.cs" />
     <Compile Include="Ui\Utils\InvertableBool.cs" />
+    <Compile Include="Ui\Utils\MathOperationsHelper.cs" />
     <Compile Include="Ui\Utils\TaskExtentions.cs" />
     <Compile Include="Ui\Utils\XamlHelper.cs" />
     <Compile Include="Ui\ViewModelBase.cs" />
@@ -305,6 +309,10 @@
     <Page Include="Ui\Design\SqlFlowDocument.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Ui\Dialogs\MathOperationsDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup />

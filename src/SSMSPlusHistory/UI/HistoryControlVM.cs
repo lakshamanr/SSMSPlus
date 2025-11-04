@@ -27,6 +27,7 @@
         public IAsyncCommand RequestItemsCommand { get; private set; }
         public IAsyncCommand ViewLoadedCommand { get; private set; }
         public Command<SearchFilterResultVM> OpenScriptCmd { get; }
+        public Command<SSMSPlusCore.Ui.Extensions.EnhancedDataGrid> ShowMathOperationsCmd { get; }
 
         private bool _loadedOnce = false;
 
@@ -38,12 +39,21 @@
             RequestItemsCommand = new AsyncCommand(FuncHelper.DebounceAsync(ExecuteRequestItemsAsync, 100), CanExecuteSubmit, this.HandleError);
             ViewLoadedCommand = new AsyncCommand(OnViewLoadedAsync, CanExecuteSubmit, this.HandleError);
             OpenScriptCmd = new Command<SearchFilterResultVM>(OpenScript, () => true, HandleError);
+            ShowMathOperationsCmd = new Command<SSMSPlusCore.Ui.Extensions.EnhancedDataGrid>(ShowMathOperations, () => true, HandleError);
             InitDefaults();
         }
 
         private void OpenScript(SearchFilterResultVM arg)
         {
             _serviceCacheIntegration.OpenScriptInNewWindow(arg.SearchResult.QueryItem.Query);
+        }
+
+        private void ShowMathOperations(SSMSPlusCore.Ui.Extensions.EnhancedDataGrid grid)
+        {
+            if (grid != null)
+            {
+                grid.ShowMathOperations();
+            }
         }
 
         private bool CanExecuteSubmit()

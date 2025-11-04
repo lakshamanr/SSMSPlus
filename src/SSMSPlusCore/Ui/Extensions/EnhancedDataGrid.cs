@@ -4,12 +4,20 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Data;
+using SSMSPlusCore.Ui.Utils;
+using SSMSPlusCore.Ui.Dialogs;
 
 namespace SSMSPlusCore.Ui.Extensions
 {
     public class EnhancedDataGrid : DataGrid
     {
         private List<SortDescription> _sortDescriptions = new List<SortDescription>();
+
+        public EnhancedDataGrid()
+        {
+            // Enable extended selection mode to allow cell selection
+            this.SelectionUnit = DataGridSelectionUnit.CellOrRowHeader;
+        }
 
         protected override void OnSorting(DataGridSortingEventArgs eventArgs)
         {
@@ -20,6 +28,14 @@ namespace SSMSPlusCore.Ui.Extensions
         {
             base.OnItemsSourceChanged(oldValue, newValue);
             RestoreSorting(newValue);
+        }
+
+        public void ShowMathOperations()
+        {
+            var result = MathOperationsHelper.CalculateStatistics(this);
+            var dialog = new MathOperationsDialog(result);
+            dialog.Owner = System.Windows.Window.GetWindow(this);
+            dialog.ShowDialog();
         }
 
         private void RestoreSorting(IEnumerable newItemSource)

@@ -34,6 +34,7 @@
         public IAsyncCommand<SearchFilterResultVM> LocateItemCmd { get; private set; }
         public Command<SearchFilterResultVM> CopyItemNameCmd { get; private set; }
         public Command<SearchFilterResultVM> CopyItemDefinitionCmd { get; private set; }
+        public Command<SSMSPlusCore.Ui.Extensions.EnhancedDataGrid> ShowMathOperationsCmd { get; private set; }
 
         public ComboCheckBoxViewModel<MatchOn> ComboMatchVM { get; private set; }
         public ComboCheckBoxViewModel<DbSimplifiedType> ComboObjectsVM { get; private set; }
@@ -49,6 +50,7 @@
             LocateItemCmd = new AsyncCommand<SearchFilterResultVM>(LocateAsync, (_) => true, HandleError);
             CopyItemNameCmd = new Command<SearchFilterResultVM>(OnCopyItemName, null, HandleError);
             CopyItemDefinitionCmd = new Command<SearchFilterResultVM>(OnCopyItemDefinition, null, HandleError);
+            ShowMathOperationsCmd = new Command<SSMSPlusCore.Ui.Extensions.EnhancedDataGrid>(ShowMathOperations, () => true, HandleError);
 
             CreateMatchOnCombo();
             CreateObjectsCombo();
@@ -77,6 +79,14 @@
         private void OnCopyItemDefinition(SearchFilterResultVM item)
         {
             Clipboard.SetText(item.SearchResult.RichFullDefinition.AsString);
+        }
+
+        private void ShowMathOperations(SSMSPlusCore.Ui.Extensions.EnhancedDataGrid grid)
+        {
+            if (grid != null)
+            {
+                grid.ShowMathOperations();
+            }
         }
 
         #endregion
