@@ -9,53 +9,53 @@
     <Border BorderThickness="0,1,0,0" BorderBrush="#A0A0A0" Padding="8,5" Background="#DCDCDC">
         <Grid x:Name="AggregatesPanel">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/> <!-- COUNT -->
+                <ColumnDefinition Width="Auto"/> <!-- MAX -->
+                <ColumnDefinition Width="Auto"/> <!-- MIN -->
+                <ColumnDefinition Width="Auto"/> <!-- AVG -->
+                <ColumnDefinition Width="Auto"/> <!-- MEDIAN -->
+                <ColumnDefinition Width="Auto"/> <!-- SUM -->
+                <ColumnDefinition Width="Auto"/> <!-- DISTINCT -->
+                <ColumnDefinition Width="*"/>    <!-- Flexible space -->
             </Grid.ColumnDefinitions>
 
-            <!-- MAX -->
-            <TextBlock x:Name="MaxLabel" Grid.Column="0" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
-                <Run FontWeight="Bold">MAX:</Run>
-                <Run x:Name="MaxValue">-</Run>
-            </TextBlock>
-
-            <!-- MIN -->
-            <TextBlock x:Name="MinLabel" Grid.Column="1" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
-                <Run FontWeight="Bold">MIN:</Run>
-                <Run x:Name="MinValue">-</Run>
-            </TextBlock>
-
-            <!-- AVG -->
-            <TextBlock x:Name="AvgLabel" Grid.Column="2" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
-                <Run FontWeight="Bold">AVG:</Run>
-                <Run x:Name="AvgValue">-</Run>
-            </TextBlock>
-
-            <!-- MEDIAN -->
-            <TextBlock x:Name="MedianLabel" Grid.Column="3" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
-                <Run FontWeight="Bold">MEDIAN:</Run>
-                <Run x:Name="MedianValue">-</Run>
-            </TextBlock>
-
-            <!-- SUM -->
-            <TextBlock x:Name="SumLabel" Grid.Column="4" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
-                <Run FontWeight="Bold">SUM:</Run>
-                <Run x:Name="SumValue">-</Run>
-            </TextBlock>
-
-            <!-- COUNT -->
-            <TextBlock x:Name="CountLabel" Grid.Column="5" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
+            <!-- COUNT (Column 0) - First -->
+            <TextBlock x:Name="CountLabel" Grid.Column="0" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
                 <Run FontWeight="Bold">COUNT:</Run>
                 <Run x:Name="CountValue">-</Run>
             </TextBlock>
 
-            <!-- DISTINCT -->
+            <!-- MAX (Column 1) - Second -->
+            <TextBlock x:Name="MaxLabel" Grid.Column="1" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
+                <Run FontWeight="Bold">MAX:</Run>
+                <Run x:Name="MaxValue">-</Run>
+            </TextBlock>
+
+            <!-- MIN (Column 2) - Third -->
+            <TextBlock x:Name="MinLabel" Grid.Column="2" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
+                <Run FontWeight="Bold">MIN:</Run>
+                <Run x:Name="MinValue">-</Run>
+            </TextBlock>
+
+            <!-- AVG (Column 3) -->
+            <TextBlock x:Name="AvgLabel" Grid.Column="3" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
+                <Run FontWeight="Bold">AVG:</Run>
+                <Run x:Name="AvgValue">-</Run>
+            </TextBlock>
+
+            <!-- MEDIAN (Column 4) -->
+            <TextBlock x:Name="MedianLabel" Grid.Column="4" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
+                <Run FontWeight="Bold">MEDIAN:</Run>
+                <Run x:Name="MedianValue">-</Run>
+            </TextBlock>
+
+            <!-- SUM (Column 5) -->
+            <TextBlock x:Name="SumLabel" Grid.Column="5" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
+                <Run FontWeight="Bold">SUM:</Run>
+                <Run x:Name="SumValue">-</Run>
+            </TextBlock>
+
+            <!-- DISTINCT (Column 6) -->
             <TextBlock x:Name="DistinctLabel" Grid.Column="6" Margin="0,0,20,0" Foreground="#333333" Visibility="Collapsed">
                 <Run FontWeight="Bold">DISTINCT:</Run>
                 <Run x:Name="DistinctValue">-</Run>
