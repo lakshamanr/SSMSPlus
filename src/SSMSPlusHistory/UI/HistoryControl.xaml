@@ -7,6 +7,7 @@
              xmlns:ext="clr-namespace:SSMSPlusCore.Ui.Extensions;assembly=SSMSPlusCore"
              xmlns:conv="clr-namespace:SSMSPlusCore.Ui.Converters;assembly=SSMSPlusCore"
               xmlns:core="clr-namespace:SSMSPlusCore.Ui.Extensions;assembly=SSMSPlusCore"
+              xmlns:agg="clr-namespace:SSMSPlusCore.Ui.Controls.GridAggregationBar;assembly=SSMSPlusCore"
               Background="{DynamicResource {x:Static SystemColors.MenuBarBrushKey}}"
              mc:Ignorable="d" 
              d:DesignHeight="850" d:DesignWidth="1000"
@@ -83,11 +84,12 @@
 
         <Label Grid.Row="2" Padding="0" Margin="0,0,0,10" Content="{Binding Path=Message}"></Label>
 
-        <Grid Name="objectsGrid" Grid.Row="3" ext:GridExtensions.Structure="1*,1*|*">
+        <Grid Name="objectsGrid" Grid.Row="3" ext:GridExtensions.Structure="1*,auto,auto,1*|*">
             <ext:EnhancedDataGrid Grid.Row="0" MinHeight="100" Style="{StaticResource FastReadOnly}"
                       ItemsSource="{Binding Source={StaticResource QueryItemsVM_VS}}"
                       SelectedIndex="0"
-                      SelectedValue="{Binding SelectedItem}">
+                      SelectedValue="{Binding SelectedItem}"
+                      ext:EnhancedDataGrid.AggregationBar="{Binding ElementName=AggBar}">
                 <DataGrid.RowStyle>
                     <Style TargetType="DataGridRow">
                         <Setter Property="ext:GridExtensions.DoubleClickCommand" Value="{Binding ElementName=objectsGrid, Path=DataContext.OpenScriptCmd}"/>
@@ -123,19 +125,23 @@
                 </DataGrid.Columns>
             </ext:EnhancedDataGrid>
 
-            <FlowDocumentScrollViewer   Grid.Row="1" Margin="0,10,0,0" BorderBrush="Black" BorderThickness="1" 
+            <!-- Aggregation Bar for statistics -->
+            <agg:GridAggregationBar x:Name="AggBar" Grid.Row="1" />
+
+            <!-- Grid Splitter -->
+            <GridSplitter Grid.Row="2">
+                <GridSplitter.Resources>
+                    <ResourceDictionary Source="pack://application:,,,/SSMSPlusCore;component/Ui/Design/GridSplitterHorizontal.xaml"/>
+                </GridSplitter.Resources>
+            </GridSplitter>
+
+            <FlowDocumentScrollViewer   Grid.Row="3" Margin="0,10,0,0" BorderBrush="Black" BorderThickness="1" 
                                         ext:FlowDocumentScrollViewerDocumentHighlightBehavior.HighlightContext="{Binding SelectedItem.QueryHighlight}"                                      
                                         >
                 <FlowDocumentScrollViewer.Resources>
                     <ResourceDictionary Source="pack://application:,,,/SSMSPlusCore;component/Ui/Design/SqlFlowDocument.xaml"/>
                 </FlowDocumentScrollViewer.Resources>
             </FlowDocumentScrollViewer>
-
-            <GridSplitter Grid.Row="1">
-                <GridSplitter.Resources>
-                    <ResourceDictionary Source="pack://application:,,,/SSMSPlusCore;component/Ui/Design/GridSplitterHorizontal.xaml"/>
-                </GridSplitter.Resources>
-            </GridSplitter>
         </Grid>
     </Grid>
 </UserControl>

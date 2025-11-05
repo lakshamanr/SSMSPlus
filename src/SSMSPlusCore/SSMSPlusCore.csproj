@@ -234,6 +234,10 @@
       <DependentUpon>ComboCheckBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Ui\Controls\ComboCheckBox\ComboCheckBoxItem.cs" />
+    <Compile Include="Ui\Controls\GridAggregationBar\GridAggregationBar.xaml.cs">
+      <DependentUpon>GridAggregationBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Ui\Utils\MathOperationsHelper.cs" />
     <Compile Include="Ui\Controls\ComboCheckBox\ComboCheckBoxViewModel.cs" />
     <Compile Include="Ui\Controls\ComboCheckBox\IComboCheckBoxItem.cs" />
     <Compile Include="Ui\Controls\ComboCheckBox\IComboCheckBoxViewModel.cs" />
@@ -275,6 +279,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Ui\Controls\ComboCheckBox\ComboCheckBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Ui\Controls\GridAggregationBar\GridAggregationBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
