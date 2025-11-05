@@ -210,6 +210,7 @@
     <Compile Include="Integration\Connection\DbConnectionProvider.cs" />
     <Compile Include="Integration\Connection\DbConnectionString.cs" />
     <Compile Include="Integration\IServiceCacheIntegration.cs" />
+    <Compile Include="Integration\ResultGrid\ResultGridMonitor.cs" />
     <Compile Include="Integration\MenuHelper.cs" />
     <Compile Include="Integration\ObjectExplorer\IObjectExplorerInteraction.cs" />
     <Compile Include="Integration\ObjectExplorer\ObjectExplorerInteraction.cs" />

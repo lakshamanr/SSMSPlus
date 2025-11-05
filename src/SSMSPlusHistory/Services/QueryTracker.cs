@@ -12,6 +12,7 @@
     using Microsoft.VisualStudio.Shell;
 
     using SSMSPlusCore.Integration;
+    using SSMSPlusCore.Integration.ResultGrid;
 
     using SSMSPlusHistory.Entities;
     using SSMSPlusHistory.Repositories;
@@ -80,6 +81,9 @@
                 itemsQueue.Enqueue(queryItem);
 
                 Task.Delay(1000).ContinueWith((t) => this.SavePendingItems());
+
+                // Monitor result grid for statistics
+                ResultGridMonitor.Instance.MonitorActiveWindow();
             }
             catch (Exception ex)
             {
