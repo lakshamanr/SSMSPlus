@@ -499,16 +499,17 @@ namespace SSMSPlusCore.Integration.ResultGrid
                     return;
                 }
 
-                // Search for DataGrid or Table patterns
-                var condition = new OrCondition(
+                LogDebug($"Main window found: {mainWindow.Current.Name}");
+
+                // First, search for DataGrid or Table patterns
+                var gridCondition = new OrCondition(
                     new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.DataGrid),
                     new PropertyCondition(AutomationElement.ControlTypeProperty, ControlType.Table)
                 );
 
-                var grids = mainWindow.FindAll(TreeScope.Descendants, condition);
-                LogDebug($"Found {grids.Count} grids via UI Automation");
+                var grids = mainWindow.FindAll(TreeScope.Descendants, gridCondition);
+                LogDebug($"Found {grids.Count} grids via UI Automation (DataGrid/Table)");
 
-                // Log information about found grids
                 foreach (AutomationElement grid in grids)
                 {
                     try
@@ -517,10 +518,83 @@ namespace SSMSPlusCore.Integration.ResultGrid
                     }
                     catch { }
                 }
+
+                // EXPLORATORY: Search for ALL control types to see what's in the window
+                LogDebug("=== EXPLORATORY SEARCH: Finding all major control types ===");
+
+                var controlTypes = new[]
+                {
+                    ControlType.DataGrid,
+                    ControlType.Table,
+                    ControlType.List,
+                    ControlType.Tree,
+                    ControlType.Custom,
+                    ControlType.Pane,
+                    ControlType.Document,
+                    ControlType.Window
+                };
+
+                foreach (var controlType in controlTypes)
+                {
+                    try
+                    {
+                        var condition = new PropertyCondition(AutomationElement.ControlTypeProperty, controlType);
+                        var elements = mainWindow.FindAll(TreeScope.Descendants, condition);
+
+                        if (elements.Count > 0)
+                        {
+                            LogDebug($"Found {elements.Count} {controlType.ProgrammaticName} controls:");
+
+                            int maxLog = Math.Min(5, elements.Count); // Log first 5 of each type
+                            for (int i = 0; i < maxLog; i++)
+                            {
+                                var element = elements[i];
+                                try
+                                {
+                                    var name = element.Current.Name;
+                                    var className = element.Current.ClassName;
+                                    var automationId = element.Current.AutomationId;
+
+                                    LogDebug($"  [{i}] Name='{name}', Class='{className}', AutomationId='{automationId}'");
+
+                                    // Check if this looks like a result grid based on name/id
+                                    if (!string.IsNullOrEmpty(name) || !string.IsNullOrEmpty(automationId))
+                                    {
+                                        var nameL = (name ?? "").ToLower();
+                                        var idL = (automationId ?? "").ToLower();
+                                        var classL = (className ?? "").ToLower();
+
+                                        if (nameL.Contains("result") || nameL.Contains("grid") || nameL.Contains("query") ||
+                                            idL.Contains("result") || idL.Contains("grid") || idL.Contains("query") ||
+                                            classL.Contains("result") || classL.Contains("grid") || classL.Contains("query"))
+                                        {
+                                            LogDebug($"    ^^^ POTENTIAL RESULT GRID! ^^^");
+                                        }
+                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    LogDebug($"  [{i}] Error reading element: {ex.Message}");
+                                }
+                            }
+
+                            if (elements.Count > maxLog)
+                            {
+                                LogDebug($"  ... and {elements.Count - maxLog} more");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogDebug($"Error searching for {controlType.ProgrammaticName}: {ex.Message}");
+                    }
+                }
+
+                LogDebug("=== END EXPLORATORY SEARCH ===");
             }
             catch (Exception ex)
             {
-                LogDebug($"UI Automation error: {ex.Message}");
+                LogDebug($"UI Automation error: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
