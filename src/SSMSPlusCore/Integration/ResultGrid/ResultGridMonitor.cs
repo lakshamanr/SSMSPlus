@@ -5,6 +5,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Threading.Tasks;
+using System.Windows.Interop;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
+using System.Text;
 using SSMSPlusCore.Ui.Utils;
 using SSMSPlusCore.Ui.Controls.GridAggregationBar;
 
@@ -20,6 +24,18 @@ namespace SSMSPlusCore.Integration.ResultGrid
         private GridAggregationBar _statisticsBar;
         private Window _statisticsWindow;
 
+        // Win32 API imports for window enumeration
+        [DllImport("user32.dll")]
+        private static extern bool EnumThreadWindows(int dwThreadId, EnumThreadDelegate lpfn, IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, StringBuilder lParam);
+
+        private const uint WM_GETTEXT = 0x000D;
+        private const uint WM_GETTEXTLENGTH = 0x000E;
+
+        private delegate bool EnumThreadDelegate(IntPtr hWnd, IntPtr lParam);
+
         public static ResultGridMonitor Instance => _instance ?? (_instance = new ResultGridMonitor());
 
         private ResultGridMonitor()
@@ -31,51 +47,133 @@ namespace SSMSPlusCore.Integration.ResultGrid
         /// </summary>
         public void MonitorActiveWindow()
         {
-            // Delay to allow result grid to be created
-            Task.Delay(500).ContinueWith(_ =>
+            LogDebug("MonitorActiveWindow called");
+
+            // Try multiple delays to catch the grid at different times
+            Task.Delay(500).ContinueWith(_ => TryFindAndHookResultGridSafe());
+            Task.Delay(1500).ContinueWith(_ => TryFindAndHookResultGridSafe());
+            Task.Delay(3000).ContinueWith(_ => TryFindAndHookResultGridSafe());
+        }
+
+        private void TryFindAndHookResultGridSafe()
+        {
+            try
             {
-                Application.Current?.Dispatcher.Invoke(() =>
+                // Try to get dispatcher
+                var dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+                if (dispatcher != null)
                 {
+                    dispatcher.Invoke(() => TryFindAndHookResultGrid());
+                }
+                else
+                {
+                    // Try without dispatcher
                     TryFindAndHookResultGrid();
-                });
-            });
+                }
+            }
+            catch (Exception ex)
+            {
+                LogDebug($"Error in TryFindAndHookResultGridSafe: {ex.Message}");
+            }
         }
 
         private void TryFindAndHookResultGrid()
         {
             try
             {
-                // Find the main SSMS window
-                Window mainWindow = Application.Current?.MainWindow;
-                if (mainWindow == null)
+                LogDebug("TryFindAndHookResultGrid started");
+
+                var foundGrids = new List<DataGrid>();
+
+                // Approach 1: Try Application.Current
+                try
                 {
-                    // Try to find any window
-                    mainWindow = Application.Current?.Windows.OfType<Window>().FirstOrDefault();
-                }
-
-                if (mainWindow == null)
-                    return;
-
-                // Search for DataGrid controls in the visual tree
-                var dataGrids = FindVisualChildren<DataGrid>(mainWindow);
-
-                foreach (var grid in dataGrids)
-                {
-                    // Check if we're already monitoring this grid
-                    if (IsAlreadyMonitored(grid))
-                        continue;
-
-                    // Check if this looks like a result grid
-                    if (IsResultGrid(grid))
+                    if (Application.Current != null)
                     {
-                        HookIntoGrid(grid);
+                        LogDebug("Application.Current found");
+
+                        var windows = Application.Current.Windows.OfType<Window>().ToList();
+                        LogDebug($"Found {windows.Count} windows via Application.Current");
+
+                        foreach (var window in windows)
+                        {
+                            LogDebug($"Searching window: {window.GetType().Name} - {window.Title}");
+                            var grids = FindVisualChildren<DataGrid>(window).ToList();
+                            LogDebug($"  Found {grids.Count} DataGrids in this window");
+                            foundGrids.AddRange(grids);
+                        }
+                    }
+                    else
+                    {
+                        LogDebug("Application.Current is null");
                     }
                 }
+                catch (Exception ex)
+                {
+                    LogDebug($"Approach 1 failed: {ex.Message}");
+                }
+
+                // Approach 2: Enumerate all HwndSource objects (WPF windows)
+                try
+                {
+                    LogDebug("Trying Approach 2: Enumerate HwndSource");
+                    var sources = PresentationSource.CurrentSources.OfType<HwndSource>().ToList();
+                    LogDebug($"Found {sources.Count} HwndSource objects");
+
+                    foreach (var source in sources)
+                    {
+                        if (source.RootVisual is DependencyObject root)
+                        {
+                            var grids = FindVisualChildren<DataGrid>(root).ToList();
+                            LogDebug($"Found {grids.Count} DataGrids in HwndSource");
+                            foundGrids.AddRange(grids);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LogDebug($"Approach 2 failed: {ex.Message}");
+                }
+
+                LogDebug($"Total DataGrids found: {foundGrids.Count}");
+
+                // Try to hook into found grids
+                int hookedCount = 0;
+                foreach (var grid in foundGrids.Distinct())
+                {
+                    try
+                    {
+                        // Check if we're already monitoring this grid
+                        if (IsAlreadyMonitored(grid))
+                        {
+                            LogDebug($"Grid already monitored: {grid.GetHashCode()}");
+                            continue;
+                        }
+
+                        // Check if this looks like a result grid
+                        if (IsResultGrid(grid))
+                        {
+                            LogDebug($"Hooking into grid: {grid.GetHashCode()}, Items: {grid.Items.Count}, Columns: {grid.Columns.Count}");
+                            HookIntoGrid(grid);
+                            hookedCount++;
+                        }
+                        else
+                        {
+                            LogDebug($"Grid doesn't look like result grid: {grid.GetHashCode()}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogDebug($"Error checking/hooking grid: {ex.Message}");
+                    }
+                }
+
+                LogDebug($"Successfully hooked {hookedCount} grids");
             }
             catch (Exception ex)
             {
                 // Log error silently - don't break SSMS
-                System.Diagnostics.Debug.WriteLine($"ResultGridMonitor error: {ex.Message}");
+                LogDebug($"ResultGridMonitor error: {ex.Message}\n{ex.StackTrace}");
             }
         }
 
@@ -149,81 +247,122 @@ namespace SSMSPlusCore.Integration.ResultGrid
 
         private void Grid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
         {
+            LogDebug($"Grid_SelectedCellsChanged event fired. Sender: {sender?.GetType().Name}");
             UpdateStatistics(sender as DataGrid);
         }
 
         private void Grid_CurrentCellChanged(object sender, EventArgs e)
         {
+            LogDebug($"Grid_CurrentCellChanged event fired. Sender: {sender?.GetType().Name}");
             UpdateStatistics(sender as DataGrid);
         }
 
         private void UpdateStatistics(DataGrid grid)
         {
             if (grid == null)
+            {
+                LogDebug("UpdateStatistics: grid is null");
                 return;
+            }
 
             try
             {
+                LogDebug($"UpdateStatistics: Grid has {grid.SelectedCells.Count} selected cells");
+
                 // Calculate statistics from selected cells
                 var result = MathOperationsHelper.CalculateStatistics(grid);
+
+                LogDebug($"Statistics calculated: HasData={result.HasData}, NumericCells={result.NumericCells}");
 
                 // Show statistics in floating window
                 ShowStatisticsWindow(result);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Statistics calculation error: {ex.Message}");
+                LogDebug($"Statistics calculation error: {ex.Message}");
             }
         }
 
         private void ShowStatisticsWindow(MathOperationsResult result)
         {
-            Application.Current?.Dispatcher.Invoke(() =>
+            try
             {
-                try
+                LogDebug("ShowStatisticsWindow called");
+
+                // Try to get the current dispatcher
+                var dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
+                if (dispatcher != null)
                 {
-                    // Create statistics window if it doesn't exist
-                    if (_statisticsWindow == null)
+                    dispatcher.Invoke(() => ShowStatisticsWindowCore(result));
+                }
+                else
+                {
+                    // Try without dispatcher
+                    ShowStatisticsWindowCore(result);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogDebug($"ShowStatisticsWindow error: {ex.Message}");
+            }
+        }
+
+        private void ShowStatisticsWindowCore(MathOperationsResult result)
+        {
+            try
+            {
+                // Create statistics window if it doesn't exist
+                if (_statisticsWindow == null)
+                {
+                    LogDebug("Creating new statistics window");
+
+                    _statisticsBar = new GridAggregationBar();
+
+                    _statisticsWindow = new Window
                     {
-                        _statisticsBar = new GridAggregationBar();
+                        Title = "Data Statistics - SSMS Plus",
+                        Content = _statisticsBar,
+                        Width = 800,
+                        Height = 60,
+                        WindowStyle = WindowStyle.ToolWindow,
+                        ResizeMode = ResizeMode.CanResize,
+                        Topmost = true,
+                        ShowInTaskbar = false
+                    };
 
-                        _statisticsWindow = new Window
-                        {
-                            Title = "Data Statistics",
-                            Content = _statisticsBar,
-                            Width = 800,
-                            Height = 50,
-                            WindowStyle = WindowStyle.ToolWindow,
-                            ResizeMode = ResizeMode.NoResize,
-                            Topmost = true,
-                            ShowInTaskbar = false
-                        };
+                    // Position at bottom of screen
+                    _statisticsWindow.Left = (SystemParameters.PrimaryScreenWidth - 800) / 2;
+                    _statisticsWindow.Top = SystemParameters.PrimaryScreenHeight - 150;
 
-                        // Position at bottom of screen
-                        _statisticsWindow.Left = (SystemParameters.PrimaryScreenWidth - 800) / 2;
-                        _statisticsWindow.Top = SystemParameters.PrimaryScreenHeight - 150;
-                    }
+                    LogDebug($"Window created at position ({_statisticsWindow.Left}, {_statisticsWindow.Top})");
+                }
 
-                    // Update statistics
-                    _statisticsBar.UpdateStatistics(result);
+                // Update statistics
+                _statisticsBar.UpdateStatistics(result);
+                LogDebug("Statistics bar updated");
 
-                    // Show window if it has data
-                    if (result.HasData && result.NumericCells > 0)
+                // Show window if it has data
+                if (result.HasData && result.NumericCells > 0)
+                {
+                    if (!_statisticsWindow.IsVisible)
                     {
-                        if (!_statisticsWindow.IsVisible)
-                            _statisticsWindow.Show();
-                    }
-                    else
-                    {
-                        if (_statisticsWindow.IsVisible)
-                            _statisticsWindow.Hide();
+                        _statisticsWindow.Show();
+                        LogDebug("Statistics window shown");
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    System.Diagnostics.Debug.WriteLine($"Statistics window error: {ex.Message}");
+                    if (_statisticsWindow.IsVisible)
+                    {
+                        _statisticsWindow.Hide();
+                        LogDebug("Statistics window hidden (no data)");
+                    }
                 }
-            });
+            }
+            catch (Exception ex)
+            {
+                LogDebug($"Statistics window error: {ex.Message}\n{ex.StackTrace}");
+            }
         }
 
         /// <summary>
@@ -261,6 +400,42 @@ namespace SSMSPlusCore.Integration.ResultGrid
             _statisticsWindow?.Close();
             _statisticsWindow = null;
             _monitoredGrids.Clear();
+        }
+
+        /// <summary>
+        /// Log debug messages to both Debug output and log file
+        /// </summary>
+        private void LogDebug(string message)
+        {
+            try
+            {
+                var fullMessage = $"[ResultGridMonitor] {DateTime.Now:HH:mm:ss.fff} - {message}";
+
+                // Output to Debug window
+                System.Diagnostics.Debug.WriteLine(fullMessage);
+
+                // Also write to log file
+                var logPath = System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "SSMS Plus",
+                    "ResultGridMonitor.log");
+
+                System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(logPath));
+                System.IO.File.AppendAllText(logPath, fullMessage + Environment.NewLine);
+            }
+            catch
+            {
+                // Ignore logging errors
+            }
+        }
+
+        /// <summary>
+        /// Public method to manually trigger grid search (for testing)
+        /// </summary>
+        public void ManualScan()
+        {
+            LogDebug("=== MANUAL SCAN TRIGGERED ===");
+            TryFindAndHookResultGrid();
         }
     }
 }
