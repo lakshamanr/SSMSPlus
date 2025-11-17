@@ -40,6 +40,11 @@
         <Parent guid="guidCommand1PackageCmdSet" id="MyTopMenu"/>
         <!--<Parent guid="guidSHLMainMenu" id="IDM_VS_MENU_TOOLS" />-->
       </Group>
+
+      <!-- Editor Context Menu Group -->
+      <Group guid="guidCommand1PackageCmdSet" id="EditorContextGroup" priority="0x0100">
+        <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_CODEWIN"/>
+      </Group>
     </Groups>
 
     <Menus>
@@ -89,6 +94,17 @@
           <ButtonText>BEGIN/END Flow Analyzer</ButtonText>
         </Strings>
       </Button>
+
+      <!-- Context Menu: Analyze Selected SQL -->
+      <Button guid="guidCommand1PackageCmdSet" id="AnalyzeSelectionCmd" priority="0x0100" type="Button">
+        <Parent guid="guidCommand1PackageCmdSet" id="EditorContextGroup" />
+        <Icon guid="flowchart" id="bmpPic1" />
+        <Strings>
+          <ButtonText>Analyze SQL Flow</ButtonText>
+          <CommandName>Analyze SQL Flow</CommandName>
+        </Strings>
+      </Button>
+
       <Button guid="guidCommand1PackageCmdSet" id="PreferencesCmd" priority="0x0100" type="Button">
         <Parent guid="guidCommand1PackageCmdSet" id="MyMenuGroup" />
         <Strings>
@@ -127,10 +143,12 @@
     <GuidSymbol name="guidCommand1PackageCmdSet" value="{26d56063-673e-4de6-b6bd-8ebf0f367895}">
       <IDSymbol name="MyTopMenu" value="0x1001" />
       <IDSymbol name="MyMenuGroup" value="0x1020" />
+      <IDSymbol name="EditorContextGroup" value="0x1030" />
       <IDSymbol name="ExecutionHistoryCmd" value="1001" />
       <IDSymbol name="SchemaSearchCmd" value="1101"  />
       <IDSymbol name="DocumentViewerCmd" value="1201"  />
       <IDSymbol name="FlowAnalyzerCmd" value="1301"  />
+      <IDSymbol name="AnalyzeSelectionCmd" value="1302"  />
       <IDSymbol name="PreferencesCmd" value="2001"  />
     </GuidSymbol>
 
