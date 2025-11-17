@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSMSPlusPreferences", "SSMS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSMSPlusDb", "SSMSPlusDb\SSMSPlusDb.csproj", "{FD9DA179-770E-46BB-8676-A757D4375F8C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSMSPlusFlowAnalyzer", "SSMSPlusFlowAnalyzer\SSMSPlusFlowAnalyzer.csproj", "{8B3A4C7D-9E2F-4A1B-8C5D-3F6E9A2B1C4D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{FD9DA179-770E-46BB-8676-A757D4375F8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD9DA179-770E-46BB-8676-A757D4375F8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD9DA179-770E-46BB-8676-A757D4375F8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8B3A4C7D-9E2F-4A1B-8C5D-3F6E9A2B1C4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8B3A4C7D-9E2F-4A1B-8C5D-3F6E9A2B1C4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8B3A4C7D-9E2F-4A1B-8C5D-3F6E9A2B1C4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8B3A4C7D-9E2F-4A1B-8C5D-3F6E9A2B1C4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

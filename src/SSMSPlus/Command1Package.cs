@@ -14,6 +14,7 @@ using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using Microsoft.Win32;
 using SSMSPlusDocument.UI;
+using SSMSPlusFlowAnalyzer.UI;
 using SSMSPlusHistory.UI;
 using SSMSPlusSearch.UI;
 using Task = System.Threading.Tasks.Task;
@@ -46,6 +47,7 @@ namespace SSMSPlus
     [ProvideToolWindow(typeof(HistoryToolWindow), Style = VsDockStyle.Tabbed, Window = "00000000-0000-0000-0000-000000000001")]
     [ProvideToolWindow(typeof(SearchToolWindow), Window = "00000000-0000-0000-0000-000000000002", MultiInstances = true, Transient = true)]
     [ProvideToolWindow(typeof(ExportDocumentsWindow), Window = "00000000-0000-0000-0000-000000000003", MultiInstances = true, Transient = true)]
+    [ProvideToolWindow(typeof(FlowAnalyzerToolWindow), Style = VsDockStyle.Tabbed, Window = "00000000-0000-0000-0000-000000000004")]
     public sealed class Command1Package : AsyncPackage
     {
         /// <summary>

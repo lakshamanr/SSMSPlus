@@ -82,6 +82,13 @@
           <ButtonText>Document Export</ButtonText>
         </Strings>
       </Button>
+      <Button guid="guidCommand1PackageCmdSet" id="FlowAnalyzerCmd" priority="0x0100" type="Button">
+        <Parent guid="guidCommand1PackageCmdSet" id="MyMenuGroup" />
+        <Icon guid="flowchart" id="bmpPic1" />
+        <Strings>
+          <ButtonText>BEGIN/END Flow Analyzer</ButtonText>
+        </Strings>
+      </Button>
       <Button guid="guidCommand1PackageCmdSet" id="PreferencesCmd" priority="0x0100" type="Button">
         <Parent guid="guidCommand1PackageCmdSet" id="MyMenuGroup" />
         <Strings>
@@ -100,6 +107,7 @@
       <Bitmap guid="timeback" href="Resources\google\timeback.png" usedList="bmpPic1" />
       <Bitmap guid="find" href="Resources\google\find.png" usedList="bmpPic1" />
       <Bitmap guid="download" href="Resources\google\download.png" usedList="bmpPic1" />
+      <Bitmap guid="flowchart" href="Resources\google\flowchart.png" usedList="bmpPic1" />
     </Bitmaps>
   </Commands>
 
@@ -122,6 +130,7 @@
       <IDSymbol name="ExecutionHistoryCmd" value="1001" />
       <IDSymbol name="SchemaSearchCmd" value="1101"  />
       <IDSymbol name="DocumentViewerCmd" value="1201"  />
+      <IDSymbol name="FlowAnalyzerCmd" value="1301"  />
       <IDSymbol name="PreferencesCmd" value="2001"  />
     </GuidSymbol>
 
@@ -134,6 +143,10 @@
     </GuidSymbol>
 
     <GuidSymbol name="download" value="{0c6e5c94-f934-4bac-acf9-e56653df5112}">
+      <IDSymbol name="bmpPic1" value="1" />
+    </GuidSymbol>
+
+    <GuidSymbol name="flowchart" value="{0c6e5c94-f934-4bac-acf9-e56653df5113}">
       <IDSymbol name="bmpPic1" value="1" />
     </GuidSymbol>
 

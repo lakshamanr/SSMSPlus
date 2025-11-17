@@ -25,6 +25,8 @@ using SSMSPlusDb.DbUpdate;
 
 using SSMSPlusDocument;
 
+using SSMSPlusFlowAnalyzer;
+
 using SSMSPlusHistory;
 
 using SSMSPlusPreferences;
@@ -74,6 +76,7 @@ namespace SSMSPlus
                 _serviceProvider.GetRequiredService<HistoryPlugin>().Register();
                 _serviceProvider.GetRequiredService<SearchPlugin>().Register();
                 _serviceProvider.GetRequiredService<DocumentPlugin>().Register();
+                _serviceProvider.GetRequiredService<FlowAnalyzerPlugin>().Register();
                 _serviceProvider.GetRequiredService<PreferencesUI>().Register();
             }
             catch (Exception ex)
@@ -116,6 +119,7 @@ namespace SSMSPlus
             services.AddSSMSPlusHistoryServices();
             services.AddSSMSPlusSearchServices();
             services.AddSSMSPlusDocumentServices();
+            services.AddSSMSPlusFlowAnalyzerServices();
             services.AddSSMSPlusPreferencesServices();
             return services;
         }
