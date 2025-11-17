@@ -8,6 +8,11 @@
              d:DesignHeight="600" d:DesignWidth="800"
              Background="White">
     <UserControl.Resources>
+        <!-- Converters -->
+        <local:ZeroToVisibilityConverter x:Key="ZeroToVisibleConverter" ShowWhenZero="True" />
+        <local:ZeroToVisibilityConverter x:Key="ZeroToCollapsedConverter" ShowWhenZero="False" />
+
+        <!-- Styles -->
         <Style TargetType="Button">
             <Setter Property="Padding" Value="10,5"/>
             <Setter Property="Margin" Value="5"/>

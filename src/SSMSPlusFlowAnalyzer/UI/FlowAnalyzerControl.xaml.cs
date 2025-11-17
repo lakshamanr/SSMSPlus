@@ -18,10 +18,6 @@ namespace SSMSPlusFlowAnalyzer.UI
 
             // Set up data context
             this.Loaded += OnLoaded;
-
-            // Add value converters as resources
-            this.Resources.Add("ZeroToVisibleConverter", new ZeroToVisibilityConverter(true));
-            this.Resources.Add("ZeroToCollapsedConverter", new ZeroToVisibilityConverter(false));
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
@@ -46,17 +42,15 @@ namespace SSMSPlusFlowAnalyzer.UI
     /// </summary>
     public class ZeroToVisibilityConverter : IValueConverter
     {
-        private readonly bool _showWhenZero;
-
-        public ZeroToVisibilityConverter(bool showWhenZero)
-        {
-            _showWhenZero = showWhenZero;
-        }
+        /// <summary>
+        /// Gets or sets whether to show when count is zero
+        /// </summary>
+        public bool ShowWhenZero { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null)
-                return _showWhenZero ? Visibility.Visible : Visibility.Collapsed;
+                return ShowWhenZero ? Visibility.Visible : Visibility.Collapsed;
 
             int count = 0;
             if (value is int intValue)
@@ -66,7 +60,7 @@ namespace SSMSPlusFlowAnalyzer.UI
 
             bool isZero = count == 0;
 
-            if (_showWhenZero)
+            if (ShowWhenZero)
             {
                 return isZero ? Visibility.Visible : Visibility.Collapsed;
             }
