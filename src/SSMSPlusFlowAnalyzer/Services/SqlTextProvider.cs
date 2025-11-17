@@ -30,7 +30,7 @@ namespace SSMSPlusFlowAnalyzer.Services
 
             try
             {
-                var dte = _packageProvider.DTE;
+                var dte = _packageProvider.Dte2;
                 if (dte?.ActiveDocument == null)
                 {
                     return null;
@@ -125,7 +125,7 @@ namespace SSMSPlusFlowAnalyzer.Services
 
             try
             {
-                var dte = _packageProvider.DTE;
+                var dte = _packageProvider.Dte2;
                 if (dte?.ActiveDocument == null)
                 {
                     return "No active document";

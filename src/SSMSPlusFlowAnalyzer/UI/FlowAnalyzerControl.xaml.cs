@@ -30,7 +30,7 @@ namespace SSMSPlusFlowAnalyzer.UI
             {
                 try
                 {
-                    var vm = ServiceLocator.GetService<FlowAnalyzerControlVM>();
+                    var vm = ServiceLocator.GetRequiredService<FlowAnalyzerControlVM>();
                     this.DataContext = vm;
                 }
                 catch (Exception ex)
