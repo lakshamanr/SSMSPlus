@@ -18,6 +18,7 @@ namespace SSMSPlusFlowAnalyzer.UI
     public class FlowAnalyzerControlVM : INotifyPropertyChanged
     {
         private readonly FlowAnalysisService _analysisService;
+        private readonly DiagnosticService _diagnosticService;
         private readonly ILogger<FlowAnalyzerControlVM> _logger;
 
         private SqlFlowAnalysisResult _analysisResult;
@@ -28,9 +29,11 @@ namespace SSMSPlusFlowAnalyzer.UI
 
         public FlowAnalyzerControlVM(
             FlowAnalysisService analysisService,
+            DiagnosticService diagnosticService,
             ILogger<FlowAnalyzerControlVM> logger)
         {
             _analysisService = analysisService;
+            _diagnosticService = diagnosticService;
             _logger = logger;
 
             FlowNodes = new ObservableCollection<FlowNodeVM>();
@@ -125,16 +128,34 @@ namespace SSMSPlusFlowAnalyzer.UI
                         _logger.LogWarning($"Analysis completed with errors: {string.Join(", ", result.Errors)}");
                     }
 
+                    // Run diagnostic if no nodes were found or if there are errors
+                    if (result.AllNodes.Count <= 1 || result.Errors.Count > 0)
+                    {
+                        _logger.LogInformation("Running diagnostic report...");
+                        string diagnosticReport = _diagnosticService.DiagnoseParsingIssue(result.OriginalSql);
+                        _logger.LogInformation("Diagnostic report:");
+                        _logger.LogInformation(diagnosticReport);
+
+                        // Add diagnostic summary to errors
+                        result.Errors.Insert(0, "DIAGNOSTIC ENABLED - Check log file for full diagnostic report");
+                        result.Errors.Insert(1, $"SQL Length: {result.OriginalSql?.Length ?? 0} chars");
+                    }
+
                     AnalysisResult = result;
 
                     if (result.Errors.Count > 0)
                     {
-                        StatusMessage = $"Analysis completed with {result.Errors.Count} error(s)";
+                        StatusMessage = $"Analysis completed with {result.Errors.Count} error(s) - Check Statistics tab";
                     }
                     else if (result.AllNodes.Count == 0)
                     {
                         StatusMessage = "No control flow structures found in the SQL";
                         _logger.LogInformation("No control flow structures found");
+                    }
+                    else if (result.AllNodes.Count == 1)
+                    {
+                        StatusMessage = "Only ROOT node found - SQL may not contain control flow constructs";
+                        _logger.LogWarning("Only ROOT node found");
                     }
                     else
                     {

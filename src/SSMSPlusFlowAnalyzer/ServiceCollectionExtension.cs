@@ -14,6 +14,7 @@ namespace SSMSPlusFlowAnalyzer
             // Register services
             services.AddSingleton<SqlTextProvider>();
             services.AddSingleton<FlowAnalysisService>();
+            services.AddSingleton<DiagnosticService>();
 
             // Register UI components
             services.AddSingleton<FlowAnalyzerUi>();
