@@ -5,7 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Microsoft.Extensions.Logging;
-using SSMSPlusCore.Ui.Commands;
+using SSMSPlusCore.Ui;
 using SSMSPlusFlowAnalyzer.Entities;
 using SSMSPlusFlowAnalyzer.Services;
 
@@ -37,8 +37,8 @@ namespace SSMSPlusFlowAnalyzer.UI
             Errors = new ObservableCollection<string>();
             Warnings = new ObservableCollection<string>();
 
-            AnalyzeCommand = new DelegateCommand(ExecuteAnalyze);
-            RefreshCommand = new DelegateCommand(ExecuteRefresh);
+            AnalyzeCommand = new Command(ExecuteAnalyze);
+            RefreshCommand = new Command(ExecuteRefresh);
 
             StatusMessage = "Ready. Click 'Analyze' to analyze SQL control flow.";
         }
