@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -22,17 +23,51 @@ namespace SSMSPlusFlowAnalyzer.UI
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
+            WriteDebugLog("OnLoaded: Flow Analyzer Control loaded");
+
             if (this.DataContext == null)
             {
                 try
                 {
+                    WriteDebugLog("OnLoaded: DataContext is null, getting ViewModel from ServiceLocator");
                     var vm = ServiceLocator.GetRequiredService<FlowAnalyzerControlVM>();
+                    WriteDebugLog($"OnLoaded: ViewModel retrieved successfully: {vm != null}");
+
                     this.DataContext = vm;
+                    WriteDebugLog("OnLoaded: DataContext set successfully");
+
+                    MessageBox.Show("Flow Analyzer initialized successfully!\nViewModel connected.\nClick Analyze to test.",
+                        "Flow Analyzer Init", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error initializing Flow Analyzer: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    WriteDebugLog($"OnLoaded: ERROR - {ex.Message}\n{ex.StackTrace}");
+                    MessageBox.Show($"Error initializing Flow Analyzer:\n{ex.Message}\n\nStack:\n{ex.StackTrace}",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+            }
+            else
+            {
+                WriteDebugLog("OnLoaded: DataContext already set");
+            }
+        }
+
+        private void WriteDebugLog(string message)
+        {
+            try
+            {
+                string logPath = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "SSMS Plus", "log", "FlowAnalyzer_Debug.txt");
+
+                Directory.CreateDirectory(Path.GetDirectoryName(logPath));
+
+                File.AppendAllText(logPath,
+                    $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} | {message}\n");
+            }
+            catch
+            {
+                // Ignore logging errors
             }
         }
     }

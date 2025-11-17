@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Windows;
 using System.Windows.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Shell;
@@ -36,15 +37,20 @@ namespace SSMSPlusFlowAnalyzer.UI
             _diagnosticService = diagnosticService;
             _logger = logger;
 
+            _logger.LogInformation("=== FlowAnalyzerControlVM Constructor Started ===");
+
             FlowNodes = new ObservableCollection<FlowNodeVM>();
             ExecutionOrder = new ObservableCollection<FlowNodeVM>();
             Errors = new ObservableCollection<string>();
             Warnings = new ObservableCollection<string>();
 
+            _logger.LogInformation("Creating commands...");
             AnalyzeCommand = new Command(ExecuteAnalyze);
             RefreshCommand = new Command(ExecuteRefresh);
 
             StatusMessage = "Ready. Click 'Analyze' to analyze SQL control flow.";
+
+            _logger.LogInformation("=== FlowAnalyzerControlVM Constructor Completed ===");
         }
 
         public ICommand AnalyzeCommand { get; }
@@ -108,6 +114,10 @@ namespace SSMSPlusFlowAnalyzer.UI
 
         private void ExecuteAnalyze()
         {
+            // TEMPORARY DEBUG: Verify this method is being called
+            MessageBox.Show("ExecuteAnalyze called! Check log file.", "Flow Analyzer Debug",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+
             ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
                 await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
@@ -117,7 +127,7 @@ namespace SSMSPlusFlowAnalyzer.UI
                     IsAnalyzing = true;
                     StatusMessage = "Analyzing SQL control flow...";
 
-                    _logger.LogInformation("Starting SQL flow analysis");
+                    _logger.LogInformation(">>> STARTING SQL FLOW ANALYSIS <<<");
 
                     var result = _analysisService.AnalyzeActiveDocument();
 
