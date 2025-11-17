@@ -28,10 +28,12 @@ namespace SSMSPlusFlowAnalyzer.Services
         {
             try
             {
+                _logger.LogInformation("Getting SQL text from active document");
                 var sql = _sqlTextProvider.GetSqlText();
 
                 if (string.IsNullOrWhiteSpace(sql))
                 {
+                    _logger.LogWarning("No SQL text retrieved from active document");
                     return new SqlFlowAnalysisResult
                     {
                         OriginalSql = "",
@@ -43,6 +45,7 @@ namespace SSMSPlusFlowAnalyzer.Services
                 }
 
                 _logger.LogInformation($"Analyzing SQL text ({sql.Length} characters)");
+                _logger.LogDebug($"SQL text preview: {(sql.Length > 100 ? sql.Substring(0, 100) + "..." : sql)}");
 
                 return AnalyzeSql(sql);
             }
@@ -54,7 +57,8 @@ namespace SSMSPlusFlowAnalyzer.Services
                     OriginalSql = "",
                     Errors = new System.Collections.Generic.List<string>
                     {
-                        $"Error analyzing SQL: {ex.Message}"
+                        $"Error analyzing SQL: {ex.Message}",
+                        $"Stack trace: {ex.StackTrace}"
                     }
                 };
             }

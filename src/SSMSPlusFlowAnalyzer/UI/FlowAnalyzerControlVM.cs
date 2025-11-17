@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Shell;
 using SSMSPlusCore.Ui;
 using SSMSPlusFlowAnalyzer.Entities;
 using SSMSPlusFlowAnalyzer.Services;
@@ -104,32 +105,60 @@ namespace SSMSPlusFlowAnalyzer.UI
 
         private void ExecuteAnalyze()
         {
-            try
+            ThreadHelper.JoinableTaskFactory.Run(async () =>
             {
-                IsAnalyzing = true;
-                StatusMessage = "Analyzing SQL control flow...";
+                await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-                var result = _analysisService.AnalyzeActiveDocument();
-                AnalysisResult = result;
+                try
+                {
+                    IsAnalyzing = true;
+                    StatusMessage = "Analyzing SQL control flow...";
 
-                if (result.Errors.Count > 0)
-                {
-                    StatusMessage = $"Analysis completed with {result.Errors.Count} error(s)";
+                    _logger.LogInformation("Starting SQL flow analysis");
+
+                    var result = _analysisService.AnalyzeActiveDocument();
+
+                    _logger.LogInformation($"Analysis complete. Nodes: {result.AllNodes.Count}, Errors: {result.Errors.Count}");
+
+                    if (result.Errors.Count > 0)
+                    {
+                        _logger.LogWarning($"Analysis completed with errors: {string.Join(", ", result.Errors)}");
+                    }
+
+                    AnalysisResult = result;
+
+                    if (result.Errors.Count > 0)
+                    {
+                        StatusMessage = $"Analysis completed with {result.Errors.Count} error(s)";
+                    }
+                    else if (result.AllNodes.Count == 0)
+                    {
+                        StatusMessage = "No control flow structures found in the SQL";
+                        _logger.LogInformation("No control flow structures found");
+                    }
+                    else
+                    {
+                        StatusMessage = $"Analysis complete: {result.GetSummary()}";
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    StatusMessage = $"Analysis complete: {result.GetSummary()}";
+                    _logger.LogError(ex, "Error during analysis");
+                    StatusMessage = $"Error: {ex.Message}";
+
+                    // Add error to visible errors list
+                    Errors.Clear();
+                    Errors.Add($"Analysis Error: {ex.Message}");
+                    if (ex.InnerException != null)
+                    {
+                        Errors.Add($"Inner Exception: {ex.InnerException.Message}");
+                    }
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error during analysis");
-                StatusMessage = $"Error: {ex.Message}";
-            }
-            finally
-            {
-                IsAnalyzing = false;
-            }
+                finally
+                {
+                    IsAnalyzing = false;
+                }
+            });
         }
 
         private void ExecuteRefresh()
@@ -146,12 +175,16 @@ namespace SSMSPlusFlowAnalyzer.UI
 
             if (AnalysisResult == null)
             {
+                _logger.LogWarning("UpdateDisplay called with null AnalysisResult");
                 return;
             }
+
+            _logger.LogInformation($"UpdateDisplay: Processing {AnalysisResult.AllNodes.Count} nodes");
 
             // Build tree structure
             if (AnalysisResult.RootNode != null)
             {
+                _logger.LogInformation($"Building tree from root node with {AnalysisResult.RootNode.Children.Count} children");
                 var rootVM = BuildTreeViewModel(AnalysisResult.RootNode);
                 if (rootVM != null && rootVM.Children.Count > 0)
                 {
@@ -159,31 +192,47 @@ namespace SSMSPlusFlowAnalyzer.UI
                     {
                         FlowNodes.Add(child);
                     }
+                    _logger.LogInformation($"Added {FlowNodes.Count} root-level nodes to tree");
+                }
+                else
+                {
+                    _logger.LogWarning("Root VM has no children to display");
                 }
             }
 
-            // Build execution order list
+            // Build execution order list - show ALL nodes in execution order
             if (AnalysisResult.ExecutionOrder != null)
             {
-                foreach (var node in AnalysisResult.ExecutionOrder.Where(n => n.NodeType != FlowNodeType.BeginEnd || n.Parent == null))
+                _logger.LogInformation($"Building execution order from {AnalysisResult.ExecutionOrder.Count} nodes");
+                foreach (var node in AnalysisResult.ExecutionOrder)
                 {
                     ExecutionOrder.Add(new FlowNodeVM(node));
                 }
+                _logger.LogInformation($"Added {ExecutionOrder.Count} nodes to execution order");
             }
 
             // Add errors and warnings
-            foreach (var error in AnalysisResult.Errors)
+            if (AnalysisResult.Errors != null)
             {
-                Errors.Add(error);
+                foreach (var error in AnalysisResult.Errors)
+                {
+                    Errors.Add(error);
+                }
+                _logger.LogInformation($"Added {Errors.Count} errors");
             }
 
-            foreach (var warning in AnalysisResult.Warnings)
+            if (AnalysisResult.Warnings != null)
             {
-                Warnings.Add(warning);
+                foreach (var warning in AnalysisResult.Warnings)
+                {
+                    Warnings.Add(warning);
+                }
+                _logger.LogInformation($"Added {Warnings.Count} warnings");
             }
 
             // Update summary
             SummaryText = AnalysisResult.GetSummary();
+            _logger.LogInformation($"Summary: {SummaryText}");
         }
 
         private FlowNodeVM BuildTreeViewModel(FlowNode node)
