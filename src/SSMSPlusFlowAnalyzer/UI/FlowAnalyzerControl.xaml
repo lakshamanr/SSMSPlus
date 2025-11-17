@@ -95,7 +95,7 @@
             <!-- Execution Order -->
             <TabItem Header="Execution Order">
                 <Grid>
-                    <ListBox ItemsSource="{Binding ExecutionOrder}" DisplayMemberPath="DisplayText">
+                    <ListBox ItemsSource="{Binding ExecutionOrder}">
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="ListBoxItem">
                                 <Setter Property="Padding" Value="5"/>
